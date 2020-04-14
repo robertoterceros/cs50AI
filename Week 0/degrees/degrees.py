@@ -52,10 +52,11 @@ def load_data(directory):
                 pass
 
 
-#def main():
+def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
     directory = sys.argv[1] if len(sys.argv) == 2 else "large"
+    #directory = "large"
 
     # Load data from files into memory
     print("Loading data...")
@@ -91,21 +92,46 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    # Keep looping until solution found
-    explored_persons = set()
+    # 1. Start with a frontier that contains the initial state
+    start = Node(state = source, parent = None, action=None)
+    # Define an empty Queue frontier
+    frontier = QueueFrontier()
+    # Add initial state
+    frontier.add(start)
+    # Initialize an empty explored set
+    explored_set = set()
+    contador = 1
+    # Keep looking until solution found
     while True:
-        neighbors_in_list = neighbors_for_person(person_id)
-        for neighbor in neighbors_in_list:
+        #print(contador)
+        #contador += 1
+        # If nothing left in frontier then no path
+        if frontier.empty():
+            return None
+        # Choose a node from the frontier and remove from it:
+        node = frontier.remove()
+        # If the node contains goal state, then return Solution
+        if node.state == target:
+            path = []
+            while node.parent is not None:
+                path.append([node.action, node.state])
+                node = node.parent
+            path.reverse()
+            return path
 
+        # Add neighbors to frontier
+        for action, state in neighbors_for_person(node.state):
+            #print("The state is: ", state)
+            #print(explored_set)
+            if not frontier.contains_state(state) and state not in explored_set:
+                #print("Dentro del if")
+                child = Node(state=state, parent = node, action=action)
+                frontier.add(child)
 
+        # Mark node as explored
+        explored_set.add(node.state)
 
-
-
-    # Find neighbors
-
-
-    # TODO
-    raise NotImplementedError
+    return None
 
 
 def person_id_for_name(name):
