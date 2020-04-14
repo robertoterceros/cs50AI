@@ -110,14 +110,6 @@ def shortest_path(source, target):
             return None
         # Choose a node from the frontier and remove from it:
         node = frontier.remove()
-        # If the node contains goal state, then return Solution
-        if node.state == target:
-            path = []
-            while node.parent is not None:
-                path.append([node.action, node.state])
-                node = node.parent
-            path.reverse()
-            return path
 
         # Add neighbors to frontier
         for action, state in neighbors_for_person(node.state):
@@ -127,10 +119,16 @@ def shortest_path(source, target):
                 #print("Dentro del if")
                 child = Node(state=state, parent = node, action=action)
                 frontier.add(child)
-
-        # Mark node as explored
-        explored_set.add(node.state)
-
+                # If the node contains goal state, then return Solution
+                if child.state == target:
+                    path = []
+                    while child.parent is not None:
+                        path.append([child.action, child.state])
+                        child = child.parent
+                    path.reverse()
+                    return path
+                # Mark node as explored
+                explored_set.add(node.state)
     return None
 
 
