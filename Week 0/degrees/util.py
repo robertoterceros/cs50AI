@@ -13,6 +13,7 @@ class StackFrontier():
         self.frontier.append(node)
 
     def contains_state(self, state):
+a
         return any(node.state == state for node in self.frontier)
 
     def empty(self):
