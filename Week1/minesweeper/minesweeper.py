@@ -223,13 +223,6 @@ class MinesweeperAI():
         self.knowledge.append(Sentence(neighbors, count))
 
         # 4) mark any additional cells as safe or as mines if it can be concluded based on the AI's knowledge base
-        
-        counter = 1
-        while counter:
-            counter = 0
-            for sentence in self.knowledge:
-                
-        
 
         for sentence in self.knowledge:
             for ce in sentence.cells:
@@ -240,8 +233,6 @@ class MinesweeperAI():
         
 
         
-
-
 
         self.knowledge.append(cell, count) #4
         for sentence in self.knowledge:
@@ -263,7 +254,7 @@ class MinesweeperAI():
         and self.moves_made, but should not modify any of those values.
         """
         for cell in self.safes:
-            if cell not in self.moves_made:
+            if cell not in self.moves_made: and cell not in self.mines:
                 return cell
         else:
             return None
@@ -275,8 +266,9 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        for cell in self.cells:
-            if cell is not in self.moves_made and cell is not in self.mines:
-                return cell
-        else:
-            return None
+        for i in range(0, self.height):
+            for j in range(0, self.width):
+                random_move = (i,j)
+                if random_move not in self.moves_made and random_move not in self.mines:
+                    return random_move
+        return None

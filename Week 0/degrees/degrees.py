@@ -100,7 +100,6 @@ def shortest_path(source, target):
     frontier.add(start)
     # Initialize an empty explored set
     explored_set = set()
-    contador = 1
     # Keep looking until solution found
     while True:
         #print(contador)
@@ -113,8 +112,7 @@ def shortest_path(source, target):
 
         # Add neighbors to frontier
         for action, state in neighbors_for_person(node.state):
-            #print("The state is: ", state)
-            #print(explored_set)
+            
             if not frontier.contains_state(state) and state not in explored_set:
                 #print("Dentro del if")
                 child = Node(state=state, parent = node, action=action)

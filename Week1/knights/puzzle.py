@@ -78,6 +78,7 @@ knowledge3 = And(
     Or(AKnight, AKnave), # A has to be a knight or a knave
     Or(BKnight, BKnave), # The same for b
     Or(CKnight, CKnave), # The same for c
+
     # TODO
 )
 
