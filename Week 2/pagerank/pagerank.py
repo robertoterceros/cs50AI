@@ -58,14 +58,18 @@ def transition_model(corpus, page, damping_factor):
     a link at random chosen from all pages in the corpus.
     """
     name_pages = list(corpus.keys())
-    random_proba = (1 - damping_factor) / len(name_pages)
-    new_dict = {}
-    for i in range(len(name_pages)):
-        new_dict[name_pages[i]] = random_proba
-
-    # Get the probabilities from the current page 
+    corpus_size = len(name_pages)
+    
     linked_pages = list(corpus[page])
     number_linked_pages = len(linked_pages)
+
+    if number_linked_pages == 0:
+        return {page: 1/corpus_size for page in corpus}
+
+    random_proba = (1 - damping_factor) / corpus_size
+    new_dict = {page: random_proba for page in corpus}
+
+    # Get the probabilities from the current page 
     proba_linked = damping_factor / number_linked_pages
 
     for name in linked_pages:
@@ -89,16 +93,16 @@ def sample_pagerank(corpus, damping_factor, n):
     page = random.choice(name_pages)
 
     # Create the dictionary for the return
-    pages_dict = {}
-    for i in range(len(name_pages)):
-        pages_dict[name_pages[i]] = 0
+    pages_dict = {page: 0 for page in corpus}
 
     # For each sample, the next should be generated based on the previous sample's transition model
     for i in range(n):
         transition_probabilities = transition_model(corpus, page, damping_factor)
         probs = np.array(list(transition_probabilities.values()))
-        keys = transition_probabilities.keys()
-        page = np.random.choice(keys, size=1, replace=True, p=probs)
+        keys = np.array(list(transition_probabilities.keys()))
+        #print(sum(probs))
+        #print(probs)
+        page = np.random.choice(keys, size=1, replace=True, p=probs)[0]
         pages_dict[page] += 1
 
     for i in range(len(name_pages)):
@@ -116,7 +120,37 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    name_pages = list(corpus.keys())
+    #page = random.choice(name_pages)
+
+    # Create the dictionary for the return
+    ranks = {page: 1/len(name_pages) for page in corpus}
+
+    change = True
+    while change:
+        change = False
+        for page in corpus:
+            new_rank = pr(page, corpus, damping_factor, ranks)
+            diff = abs(new_rank - ranks[page])
+            change = change or diff > 0.00001
+            ranks[page] = new_rank
+    return ranks
+
+def pr(page, corpus, d, ranks):
+    corpus_size = len(corpus)
+
+    sum_links = 0 
+
+    for corpus_page in corpus:
+        links = corpus[corpus_page]
+        num_links = len(links)
+        if num_links == 0:
+            sum_links += ranks[corpus_page]/corpus_size
+        elif page in links:
+            sum_links += ranks[corpus_page]/num_links
+
+    return (1 - d)/corpus_size + d * sum_links
+
 
 
 if __name__ == "__main__":
